@@ -9,12 +9,20 @@ import lombok.*;
 @NoArgsConstructor
 
 public class Customer {
+
     private Long id;
-    private String  customerName;
-    private String  customerNumber;
-    private String  customerCnic;
-    private String  customerAddress;
-    private String  customerRefNumber;
+
+    private String customername;
+
+    private String customernumber;
+
+    private String customercnic;
+
+    private String customeraddress;
+
+    private String customerrefnumber;
+
+    private String status;
 
 
 }
