@@ -79,7 +79,7 @@ new CommisionUi();
            // getContentPane().add(inputPanel, BorderLayout.NORTH);
             pack();
             setLocationRelativeTo(null);
-            setVisible(true);
+            //setVisible(true);
         }
         );
 
@@ -101,17 +101,15 @@ new CommisionUi();
         addImageOnButton(yearly, "src/main/resources/image-outline-icon.png", 100, 100);
 
         yearly.addActionListener((event) -> {
-            try {
-                frame.dispose();
-                new AnnualReportUi();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            frame.dispose();
+            new AnnualReportUi();
         });
 
 
 
         JButton back = new JButton("back");
+        addImageOnButton(back,"src/main/resources/add-note-icon.png",40,40);
+
         back.addActionListener(e->{
             frame.dispose();
             new HomeUi();

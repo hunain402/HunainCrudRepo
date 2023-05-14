@@ -52,7 +52,7 @@ public class OwnerMapper implements IMapper<Owner>{
                     .vehiclename(resultSet.getString("vehicle_name"))
                     .bookingdate(resultSet.getDate("booking_date"))
                     .enddate(Date.valueOf(resultSet.getString("end_date")))
-                    .commision(Double.valueOf(resultSet.getInt("total_commision")))
+                    .commision(Double.valueOf(resultSet.getInt("commision")))
                     .build();
             ownerList.add(owner);
         }

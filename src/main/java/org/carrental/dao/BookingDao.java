@@ -74,19 +74,37 @@ import java.util.List;
     //*************************************  BOOKING INTO BOOKING  *****************************************************
     @Override
     public void Update(Booking obj, Long id) {
+//        try {
+//            PreparedStatement ps = conn.prepareStatement(SqlQueryConstant.UPDATE_BOOKING_BY_ID);
+//            ps.setDouble(1,obj.getPrice());
+//            ps.setLong(2,id.longValue());
+//            ps.executeUpdate();
+//
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+
+    }
+
+
+    public void UpdateBooking(Bookingdetails obj, Long id) {
         try {
             PreparedStatement ps = conn.prepareStatement(SqlQueryConstant.UPDATE_BOOKING_BY_ID);
-            ps.setDouble(1,obj.getPrice());
-            ps.setLong(2,id.longValue());
+            ps.setDouble(1, obj.getPrice());
+            ps.setString(2, obj.getStatus());
+            ps.setDate(3, obj.getBookingdate());
+            ps.setLong(4, obj.getCustomerid());
+            ps.setLong(5, obj.getVehicleid());
+            ps.setLong(6, id.longValue());
             ps.executeUpdate();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
 
-    //*************************************  DELETE BOOKING BY ID  *****************************************************
+
+        //*************************************  DELETE BOOKING BY ID  *****************************************************
     @Override
     public void DeleteById(Long id) {
         try {
@@ -220,9 +238,11 @@ public  void completeBooking(String id,JDateChooser endDateChooser){
 
         Date endDate = new Date(endDateChooser.getDate().getTime());
 
-        PreparedStatement PS = conn.prepareStatement("UPDATE booking\n" +
-                "SET status = 'completed', end_date = ?\n" +
-                "WHERE id = ?");
+        PreparedStatement PS = conn.prepareStatement("UPDATE booking AS b\n" +
+                "INNER JOIN vehicle AS v ON b.vehicle_id = v.id\n" +
+                "SET b.status = 'completed', v.status = 'active', b.end_date = ?\n" +
+                "WHERE b.id = ?;"
+        );
         PS.setDate(1,endDate);
         PS.setInt(2, Integer.parseInt(id));
          PS.executeUpdate();

@@ -6,6 +6,7 @@ import org.carrental.dao.CustomerDao;
 import org.carrental.dao.VehicleDao;
 import org.carrental.domain.*;
 
+import javax.swing.*;
 import java.sql.Date;
 import java.util.List;
 
@@ -29,14 +30,14 @@ public class BookingService {
 
 
     public void save(String id, String price, String status, String bookingDate, String customerId, String vehicleId) {
-        Booking booking = Booking.builder()
+        Bookingdetails booking = Bookingdetails.builder()
                 .price(Double.valueOf(price))
                 .status(status)
-                .booking_date(Date.valueOf(bookingDate))
+                .bookingdate(Date.valueOf(bookingDate))
                 .customerid(Long.valueOf(Integer.valueOf(customerId)))
-                .Vehicleid(Long.valueOf(Integer.valueOf(vehicleId)))
+                .vehicleid(Long.valueOf(Integer.valueOf(vehicleId)))
                 .build();
-        bookingDao.Update(booking, Long.valueOf(Integer.valueOf(id)));
+        bookingDao.UpdateBooking(booking, Long.valueOf(Integer.valueOf(id)));
 
     }
 
@@ -104,6 +105,7 @@ public class BookingService {
             data[i][3] = String.valueOf(bookingdetails.get(i).getBookingdate());
             data[i][6] = String.valueOf(bookingdetails.get(i).getEnddate());
             data[i][5] = bookingdetails.get(i).getVehiclename();
+           // data[i][5] += bookingdetails.get(i).getVehicleid();
             data[i][4] = bookingdetails.get(i).getCustomername();
             data[i][7] = String.valueOf(bookingdetails.get(i).getPrice());
 
@@ -162,7 +164,7 @@ public class BookingService {
     }
     /////////////////////////
     public String[] getCustomerIdforDropDown() {
-        List<Customer> customerList = new CustomerDao().getAll();
+        List<Customer> customerList = new CustomerDao().getAllExceptDelete();
         String[] data = new String[customerList.size()];
         for (int i = 0; i < customerList.size(); i++) {
             data[i] = String.valueOf((customerList.get(i).getId()));
@@ -174,9 +176,10 @@ public class BookingService {
     public String[] getVehicleIdAndNameForDropDown() {
         List<Vehicle> vehicleList = new VehicleDao().getAllVehicleAvailable();
         String[] data = new String[vehicleList.size()];
-        for (int i = 0; i < vehicleList.size(); i++) {
+        for (int i = 0; i < vehicleList.size(); i++)
+        {
             data[i] = String.valueOf(vehicleList.get(i).getId());
-            data[i] += "  " + vehicleList.get(i).getVehiclename();
+            data[i] += "," + vehicleList.get(i).getVehiclename();
 
         }
         return data;
@@ -187,7 +190,7 @@ public class BookingService {
         String[] data = new String[vehicleList.size()];
         for (int i = 0; i < vehicleList.size(); i++) {
             data[i] = String.valueOf(vehicleList.get(i).getId());
-            data[i] += "  " + vehicleList.get(i).getVehiclename();
+            data[i] +=" "+ vehicleList.get(i).getVehiclename();
 
         }
         return data;
@@ -211,10 +214,31 @@ public class BookingService {
         return data;
     }
 
-    public void completeBookingService(String id, JDateChooser endDateChooser) {
-        bookingDao.completeBooking(id, endDateChooser);
-        new VehicleDao().changeVehicleStatusAfterCompleteBooking(id);
+//    public void completeBookingService(String id, JDateChooser endDateChooser) {
+//        bookingDao.completeBooking(id, endDateChooser);
+//        new VehicleDao().changeVehicleStatusAfterCompleteBooking(id);
+//    }
+
+    public void completeBookingService(Long bookingId, JDateChooser endDateChooser) {
+        // Get the selected end date from the endDateChooser
+        Date endDate = new Date(endDateChooser.getDate().getTime());
+
+        // Retrieve the booking from the database using the bookingId
+        Booking booking = bookingDao.GetById(bookingId);
+
+        // Check if the endDate is less than the booking date
+        if (endDate.before(booking.getBooking_date())) {
+            JOptionPane.showMessageDialog(null, "End date cannot be less than booking date");
+            return;
+        }else {
+
+            // Update the booking status to 'completed' and set the end date
+            bookingDao.completeBooking(String.valueOf(bookingId), endDateChooser);
+
+        }
+
     }
+
 
 
     public Double totalProfit(JDateChooser startDateChooser, JDateChooser endDateChooser) {

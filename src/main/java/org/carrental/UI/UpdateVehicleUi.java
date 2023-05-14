@@ -1,5 +1,6 @@
 package org.carrental.UI;
 
+import org.carrental.service.OwnerService;
 import org.carrental.service.VehicleService;
 
 import javax.swing.*;
@@ -25,8 +26,12 @@ public class UpdateVehicleUi{
                 JTextField brandtf = new JTextField(20);
                 JLabel colourlb = new JLabel("colour");
                 JTextField colourtf = new JTextField(20);
-                JLabel owneridlb = new JLabel("owner id");
-                JTextField ownerIdtf = new JTextField(20);
+//                JLabel owneridlb = new JLabel("owner id");
+                String[] oidData = new OwnerService().getOwnerIdAndNameForDropDownV();
+                JLabel oidlb = new JLabel("OWNER ID");
+                JComboBox<String> dropdownOwnerId = new JComboBox<>(oidData);
+               // JTextField ownerIdtf = new JTextField(20);
+
                 JButton back = new JButton("BACK");
                 JButton save = new JButton("SAVE");
 
@@ -38,8 +43,8 @@ public class UpdateVehicleUi{
                 frame.add(brandtf);
                 frame.add(colourlb);
                 frame.add(colourtf);
-                frame.add(owneridlb);
-                frame.add(ownerIdtf);
+                frame.add(oidlb);
+                frame.add(dropdownOwnerId);
                 frame.add(save);
                 frame.add(back);
 
@@ -48,11 +53,16 @@ public class UpdateVehicleUi{
                 modeltf.setText(model);
                 brandtf.setText(brand);
                 colourtf.setText(colour);
-                ownerIdtf.setText(ownerId);
+                dropdownOwnerId.setToolTipText(ownerId);
 
                 save.addActionListener(e -> {
+                        String abc = (String) dropdownOwnerId.getSelectedItem();
+                        String[] partsVehicle = abc.split(",");
+                        Long ownerid = Long.valueOf(partsVehicle[0]);
+
+
                         vehicleService.update(id, nameTf.getText(), Long.parseLong(modeltf.getText()), brandtf.getText(),
-                                colourtf.getText(), Long.parseLong(ownerIdtf.getText()));
+                                colourtf.getText(),ownerid);
                         frame.dispose();
                         new VehicleUi();
                 });

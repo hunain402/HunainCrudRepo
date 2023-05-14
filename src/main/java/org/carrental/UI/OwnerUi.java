@@ -1,8 +1,10 @@
 package org.carrental.UI;
 
 import org.carrental.service.OwnerService;
+import org.carrental.service.VehicleService;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class OwnerUi{
@@ -28,8 +30,7 @@ public class OwnerUi{
         btnPanel.add(update);
         addImageOnButton(update,"src/main/resources/data-update-icon.png",100,100);
 
-        update.addActionListener(e -> {
-        });
+
 
         JButton back = new JButton();
         btnPanel.add(back);
@@ -44,8 +45,7 @@ public class OwnerUi{
         JButton delete = new JButton();
         btnPanel.add(delete);
         addImageOnButton(delete,"src/main/resources/delete-icon.png",100,100);
-        delete.addActionListener(e -> {
-        });
+
 
         JButton logout = new JButton();
         btnPanel.add(logout);
@@ -79,15 +79,41 @@ public class OwnerUi{
 
         String column[]={"id","NAME","CNIC","NUMBER","ADDRESS","COMMISION"};
 
-        String [][] data= new OwnerService().getAll();
+        String [][] data= new OwnerService().getAllOwnerForJTable();
 
         JTable jt=new JTable(data,column);
         jt.setBounds(30,40,200,300);
+
+        delete.addActionListener(e -> {
+            if (jt.getSelectedRow() >= 0) {
+                String id = (String) jt.getValueAt(jt.getSelectedRow(), 0);
+                new OwnerService().softDeleteOwner(id);   //delete(id);
+                DefaultTableModel dtmDelete = new DefaultTableModel(new OwnerService().getAllOwnerForJTable(), column);
+                jt.setModel(dtmDelete);
+            } else {
+                JOptionPane.showMessageDialog(frame, "Please select the row");
+            }
+        });
+
+        update.addActionListener(e -> {
+
+            if (jt.getSelectedRow() >= 0) {
+                String id = (String) jt.getValueAt(jt.getSelectedRow(), 0);
+                String name = (String) jt.getValueAt(jt.getSelectedRow(), 1);
+                String phoneNo = (String) jt.getValueAt(jt.getSelectedRow(), 3);
+                String cnic = (String) jt.getValueAt(jt.getSelectedRow(), 2);
+                String address = (String) jt.getValueAt(jt.getSelectedRow(), 4);
+                String commision = (String) jt.getValueAt(jt.getSelectedRow(), 5);
+                frame.dispose();
+                new UpdateOwnerUi(id, name, phoneNo, cnic, address, commision);
+            } else {
+                JOptionPane.showMessageDialog(frame, "Please select the field");
+            }
+        });
+
         tblAndSearchPanel.add(searchTf);
         tblAndSearchPanel.add(jt);
-
         JScrollPane sp=new JScrollPane(jt);
-
         tblAndSearchPanel.add(sp);
 
 

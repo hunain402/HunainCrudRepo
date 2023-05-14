@@ -26,19 +26,13 @@ public class CompleteUi extends JFrame{
         JPanel inputPanel = new JPanel(new GridLayout(2, 3, 10, 10));
         inputPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-//        JLabel startDateLabel = new JLabel("From:");
-//        startDateChooser = new JDateChooser();
-      //  startDateChooser.addPropertyChangeListener("date", evt -> updateEndDate());
+
         JLabel endDateLabel = new JLabel("End DATE");
         endDateChooser = new JDateChooser();
-        //endDateChooser.addPropertyChangeListener("date", evt -> updateStartDate());
         LocalDate oneYearAgo = LocalDate.now().minusYears(1);
-       // startDateChooser.setSelectableDateRange(Date.from(oneYearAgo.atStartOfDay(ZoneId.systemDefault()).toInstant()), null);
         endDateChooser.setSelectableDateRange(Date.from(oneYearAgo.atStartOfDay(ZoneId.systemDefault()).toInstant()), null);
 
-      //  inputPanel.add(startDateLabel);
-//        inputPanel.add(startDateChooser);
-//        inputPanel.add(Box.createHorizontalStrut(10));
+
         inputPanel.add(endDateLabel);
         inputPanel.add(endDateChooser);
         inputPanel.add(Box.createHorizontalStrut(10));
@@ -46,22 +40,27 @@ public class CompleteUi extends JFrame{
         JPanel buttonPanel = new JPanel();
         JButton submitButton = new JButton("Submit");
 
+
+//submit button
         submitButton.addActionListener(e -> {
-new BookingService().completeBookingService(id,endDateChooser);
+new BookingService().completeBookingService(Long.valueOf(id),endDateChooser);
             dispose();
             new BookingUi();
         });
         buttonPanel.add(submitButton);
-//
-//        JPanel tablePanel = new JPanel(new BorderLayout());
-//        dataTable = new JTable();
-//        JScrollPane scrollPane = new JScrollPane(dataTable);
-//        tablePanel.add(scrollPane, BorderLayout.CENTER);
+
+        JButton back = new JButton("back");
+
+        back.addActionListener(e->{
+            dispose();
+            new HomeUi();
+        });
+        buttonPanel.add(back);
+
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(inputPanel, BorderLayout.NORTH);
         getContentPane().add(buttonPanel, BorderLayout.CENTER);
-     //   getContentPane().add(tablePanel, BorderLayout.EAST);
 
         pack();
         setLocationRelativeTo(null);
@@ -78,13 +77,6 @@ new BookingService().completeBookingService(id,endDateChooser);
         endDateChooser.setDate(endDateAsDate);
         endDateChooser.setSelectableDateRange(startDateChooser.getDate(), null);
     }
-//    private void updateStartDate() {
-//        LocalDate endDate = endDateChooser.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-//        LocalDate startDate = endDate.minusDays(30);
-//        Date startDateAsDate = Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-//        startDateChooser.setDate(startDateAsDate);
-//        startDateChooser.setSelectableDateRange(null, endDateChooser.getDate());
-//    }
 
     private void generateReport() {
         // TODO: write code to generate report

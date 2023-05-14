@@ -25,13 +25,13 @@ public class OwnerService {
     }
 
     //save
-    public void save(String name, String cnic,String number, String commission, String address) {
+    public void save(String name, String cnic,String number, String address, String commission) {
         Owner owner = Owner.builder()
                 .ownername(name)
                 .ownercnic(cnic)
                 .ownernumber(number)
-                .ownercommision(Float.valueOf(commission))
                 .owneraddress(address)
+                .ownercommision(Float.valueOf(commission))
                 .build();
         new OwnerDao().insert(owner);
     }
@@ -45,11 +45,15 @@ public class OwnerService {
         List<Owner> ownerList = new OwnerDao().getByName(name);
         return convertListTo2dArray(ownerList, 6);
     }
+    public String[][] getAllOwnerForJTable() {
+        List<Owner> ownerList = new OwnerDao().getAllOwnerExceptDelete();
+        return convertListTo2dArray(ownerList, 6);
+    }
 
     private static String[][] convertListTo2dArray(List<Owner> ownerList, Integer columnSize) {
         String[][] data = new String[ownerList.size()][columnSize];
         for (int i = 0; i < ownerList.size(); i++) {
-           // data[i][0] = ownerList.get(i).getOwnername();
+            data[i][0] = String.valueOf(ownerList.get(i).getId());
             data[i][1] = ownerList.get(i).getOwnername();
             data[i][2] = String.valueOf(ownerList.get(i).getOwnercnic());
             data[i][3] = String.valueOf(ownerList.get(i).getOwnernumber());
@@ -64,9 +68,36 @@ public class OwnerService {
         String[] data = new String[ownerList.size()];
         for (int i = 0; i < ownerList.size(); i++) {
             data[i] = String.valueOf((ownerList.get(i).getId()));
-            data[i] += "  " + ownerList.get(i).getOwnername();
+            data[i] += " "+ ownerList.get(i).getOwnername();
         }
         return data;
+    }
+    public String[] getOwnerIdAndNameForDropDownV() {
+        List<Owner> ownerList = new OwnerDao().getAll();
+        String[] data = new String[ownerList.size()];
+        for (int i = 0; i < ownerList.size(); i++) {
+              data[i] = String.valueOf((ownerList.get(i).getId()));
+           data[i] += ", "+ownerList.get(i).getOwnername();
+        }
+        return data;
+    }
+
+    public void softDeleteOwner(String id) {
+        new OwnerDao().updateDeleteOwnerById(Long.valueOf(Integer.valueOf(id)));
+    }
+
+    public void updateOwnerUi(String id, String name, String number, String cnic, String address, String commision) {
+        Owner owner = Owner.builder()
+                .id(Integer.valueOf(id))
+                .ownername(name)
+                .ownernumber(number)
+                .ownercnic(cnic)
+                .ownercommision(Float.valueOf(commision))
+                .owneraddress(address)
+
+                .build();
+        new OwnerDao().Update(owner, Long.valueOf(Integer.valueOf(id)));
+
     }
 }
 

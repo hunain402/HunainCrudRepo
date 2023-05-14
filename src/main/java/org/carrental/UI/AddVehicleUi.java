@@ -29,7 +29,7 @@ public class AddVehicleUi {
 
 //        JLabel owneridlb = new JLabel("owner id");
 //        JTextField owneriidtf = new JTextField(20);
-        String[] oidData = new OwnerService().getOwnerIdAndNameForDropDown();
+        String[] oidData = new OwnerService().getOwnerIdAndNameForDropDownV();
         JLabel oidlb = new JLabel("OWNER ID");
         JComboBox<String> dropdownOwnerId = new JComboBox<>(oidData);
 
@@ -56,10 +56,12 @@ public class AddVehicleUi {
         });
 
         save.addActionListener(e->{
-
+String abc = (String) dropdownOwnerId.getSelectedItem();
+            String[] partsVehicle = abc.split(",");
+            Integer ownerid = Integer.valueOf(partsVehicle[0]);
             try {
                 vehicleService.save(nameTf.getText(), modeltf.getText(),
-                        brandtf.getText(), colourtf.getText(), String.valueOf(dropdownOwnerId.getSelectedItem()));
+                        brandtf.getText(), colourtf.getText(), ownerid);
                 frame.dispose();
                 new VehicleUi();
 

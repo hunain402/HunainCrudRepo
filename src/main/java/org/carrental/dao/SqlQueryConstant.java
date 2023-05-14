@@ -23,24 +23,29 @@ public class SqlQueryConstant {
 
     public final static String GET_ALL_CID = "select customer_id from booking";
     public final static String GET_BOOKING_BY_ID = "select * from booking where id = ?";
-    public final static  String UPDATE_BOOKING_BY_ID = "update booking set price = ? where id = ? ";
+    public final static  String UPDATE_BOOKING_BY_ID = " UPDATE booking b \n" +
+            "INNER JOIN customer c ON c.id = b.customer_id \n" +
+            "INNER JOIN vehicle v ON v.id = b.vehicle_id \n" +
+            "SET b.price = ?, b.status = ?, b.booking_date = ?, b.customer_id = ?, b.vehicle_id = ?\n" +
+            "WHERE b.id = ?;";
+
     public final static String DELETE_BOOKING_BY_ID = "UPDATE booking SET status = 'deleted' WHERE id = ?";
     MonthlyUi monthlyUi = new MonthlyUi();
     public final static String GET_ALL_30DAYS_BOOKING ="select b.id, b.customer_id, b.vehicle_id, b.booking_date, b.end_date,\n" +
             "             b.price * DATEDIFF(end_date,booking_date) as total_amount, b.price, DATEDIFF(b.end_date,b.booking_date) \n" +
             "            as noOfDays, b.status, c.customer_name, v.vehicle_name from booking b\n" +
-            "             inner join customer c on b.customer_id = c.id inner join vehicle v on b.vehicle_id = v.id where b.booking_date\n" +
+            "             inner join customer c on b.customer_id = c.id inner join vehicle v on b.vehicle_id = v.id where b.end_date\n" +
             "             BETWEEN ? AND ?  AND b.status='Completed'";
     public final static String  GET_ALL_COMMISION ="select Sum(o.owner_commision*(DATEDIFF(b.end_date , b.booking_date)*b.price)/100)" +
             " commision from booking b inner join vehicle v on v.id=b.vehicle_id inner join " +
-            "vehicle_owner o on o.id = v.owner_id where (b.booking_date Between ? And ?)";
+            "vehicle_owner o on o.id = v.owner_id where (b.end_date Between ? And ?)";
 
     public final static String  GET_ALL_COMMISION_OF_EACH_OWNER="SELECT  vo.owner_name,vo.owner_commision ," +
             "round(SUM(b.price * (DATEDIFF(b.end_date, b.booking_date))) * (vo.owner_commision / 100),2) as commision\n" +
             "FROM booking b \n" +
             "INNER JOIN vehicle v ON b.vehicle_id = v.id \n" +
             "INNER JOIN vehicle_owner vo ON v.owner_id = vo.id \n" +
-            "WHERE b.booking_date BETWEEN ? AND ? \n" +
+            "WHERE b.end_date BETWEEN ? AND ? \n" +
             "GROUP BY vo.id, vo.owner_name \n" +
             "ORDER BY owner_commision DESC\n";
 
@@ -53,7 +58,7 @@ public class SqlQueryConstant {
             "INNER JOIN vehicle v ON b.vehicle_id = v.id \n" +
             "INNER JOIN vehicle_owner vo ON vo.id = v.owner_id\n" +
             "WHERE b.status = 'completed' \n" +
-            "AND b.booking_date BETWEEN ? AND ? \n" +
+            "AND b.end_date BETWEEN ? AND ? \n" +
             "ORDER BY (b.price*datediff(b.end_date,b.booking_date))-((b.price*datediff(b.end_date,b.booking_date))*(vo.owner_commision))/100 DESC \n" +
             "LIMIT 1;";
     public final static String MOST_FREQUENT_CAR=" SELECT v.vehicle_name,b.vehicle_id\n" +
@@ -104,23 +109,36 @@ public class SqlQueryConstant {
             "vehicle_brand =?,vehicle_colour =?,owner_id = ? where id = ?";
       public final static String UPDATE_VEHILCE_DELETE_BY_ID = "UPDATE vehicle SET status = 'deleted' WHERE id = ?";
 
+    public final static String YEARLY_REPO_VEHCILCE ="select v.vehicle_name, o.owner_name, b.price, o.owner_commision, \n" +
+            "            b.booking_date, b.end_date, DATEDIFF(b.end_date , b.booking_date) as noOfDays, b.price*(datediff(b.end_date , \n" +
+            "            b.booking_date)) as total_amount, o.owner_commision*(DATEDIFF(b.end_date , b.booking_date)*b.price)/100 as commision,\n" +
+            "            b.price*(datediff(b.end_date , b.booking_date)) - o.owner_commision*(DATEDIFF(b.end_date , b.booking_date)*b.price)\n" +
+            "            /100 as profit from vehicle v inner join vehicle_owner o on v.owner_id=o.id inner join booking b on v.id=b.vehicle_id where \n" +
+            "            v.vehicle_name = ? and b.end_date between ? and ? and b.status = 'Completed' ";
+
 //                                                    OWNER QUERY
   public final static String INSERT_INTO_VEHICLE_OWNER = "insert into vehicle_owner (owner_name,owner_cnic,owner_number,owner_address,owner_commision) values(?,?,?,?,?)";
 
-    public final static String GET_ALL_FROM_OWNER = "select * from vehicle_owner";
+    public final static String GET_ALL_FROM_OWNER = "select * from vehicle_owner  ";
 
     public final static String GET_OWNER_BY_ID = "select * from vehicle_owner where id = ?";
 
-    public final static  String UPDATE_OWNER_BY_ID = "update vehicle_owner set owner_name = ?,owner_cnic = ? where id = ? ";
+    public final static  String UPDATE_OWNER_BY_ID = "update vehicle_owner set owner_name = ?,owner_cnic = ?" +
+            ",owner_number=?,owner_address=?,owner_commision=? where id = ? ";
 
     public final static String DELETE_OWNER_BY_ID = "delete from vehicle_owner where id = ?";
 
-    public final static  String GET_ALL_DATA_WITH_SELECTED_YEAR_AND_OWNER="SELECT o.owner_name,o.owner_commision as commision_percent,\n" +
+    public final static String UPDATE_OWNER_IS_DELETED_BY_ID = "UPDATE vehicle_owner SET status = 'deleted' WHERE id = ?";
+
+    public final static String GET_ALL_OWNER_EXCEPT_DELETE = "select * from vehicle_owner where status <> 'deleted'";
+
+
+    public final static  String GET_ALL_DATA_WITH_SELECTED_YEAR_AND_OWNER="SELECT o.owner_name,o.owner_commision,\n" +
             " v.vehicle_name,b.booking_date,b.end_date,\n" +
-            " o.owner_commision*(DATEDIFF(b.end_date , b.booking_date)*b.price)/100 as commission FROM  vehicle_owner o \n" +
+            " o.owner_commision*(DATEDIFF(b.end_date , b.booking_date)*b.price)/100 as commision FROM  vehicle_owner o \n" +
             "inner join vehicle v on o.id = v.owner_id \n" +
             "inner join booking b on b.vehicle_id = v.id where end_date \n" +
-            "between '2023-01-01' and '2023-12-31' and b.status = 'Completed' and o.owner_name =?;";
+            "between ? and ? and b.status = 'Completed' and o.owner_name =?;";
 
 //                                               USER QUERY
 

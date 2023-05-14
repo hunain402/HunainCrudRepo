@@ -14,6 +14,7 @@ public class Booking {
     private Double price;
     private String status;
     private Date booking_date ;
+    private Date end_date ;
     private Long  customerid;
     private Long  Vehicleid;
 

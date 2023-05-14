@@ -100,7 +100,7 @@ public class VehicleUi {
         delete.addActionListener(e -> {
             if (jt.getSelectedRow() >= 0) {
                 Long id = Long.parseLong((String) jt.getValueAt(jt.getSelectedRow(), 0));
-                vehicleService.softDelete(id);
+                vehicleService.softDeleteVehicle(id);
                 DefaultTableModel dtmDelete = new DefaultTableModel(vehicleService.getAllVehicleForJtable(), column);
                 jt.setModel(dtmDelete);
             } else {

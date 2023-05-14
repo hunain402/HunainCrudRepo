@@ -1,4 +1,5 @@
 package org.carrental.dao;
+import org.carrental.domain.Bookingdetails;
 import org.carrental.domain.Vehicle;
 import org.carrental.mapper.VehicleMapper;
 import java.sql.PreparedStatement;
@@ -23,8 +24,21 @@ public class VehicleDao extends BaseDao implements ICrud<Vehicle> {
             ps.setLong(2, obj.getVehiclemodel());
             ps.setString(3, obj.getVehiclebrand());
             ps.setString(4, obj.getVehiclecolour());
-            ps.setLong(5, obj.getOnwerid());
+           ps.setLong(5, obj.getOnwerid());
             ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Bookingdetails> yearRepVehicle(Integer date, String vehicleName) {
+        try {
+            PreparedStatement statement = conn.prepareStatement(SqlQueryConstant.YEARLY_REPO_VEHCILCE);
+            statement.setString(2, date + "-01-01");
+            statement.setString(3, date +  "-12-31");
+            statement.setString(1, vehicleName);
+            ResultSet resultSet = statement.executeQuery();
+            return VehicleMapper.yearlyRepoVehicle(resultSet);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -159,8 +173,7 @@ public class VehicleDao extends BaseDao implements ICrud<Vehicle> {
     {
         try {
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("select v.id,v.vehicle_name from vehicle v \n" +
-                    "                    inner join vehicle_owner vo on vo.id = v.owner_id where v.status = 'active';");
+            ResultSet rs = stmt.executeQuery("select * from vehicle where status = 'active'");
             return vehicleMapper.AVAiT(rs);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -176,27 +189,27 @@ public class VehicleDao extends BaseDao implements ICrud<Vehicle> {
                     "FROM vehicle v\n" +
                     "INNER JOIN vehicle_owner vo ON vo.id = v.owner_id\n" +
                     "WHERE v.status <> 'deleted';\n");
-            return vehicleMapper.AVAiT(rs);
+            return vehicleMapper.annualTransform(rs);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
     }
 
-    public List<Vehicle>getAllVehicleFiveYears()
-    {
-        try {
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("\"SELECT v.id, v.vehicle_name, vo.owner_name \" +\n" +
-                    "\"FROM vehicle v \" +\n" +
-                    "\"INNER JOIN vehicle_owner vo ON vo.id = v.owner_id \" +\n" +
-                    "\"WHERE v.status <> 'deleted'\";\n");
-            return vehicleMapper.AVAiT(rs);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+//    public List<Vehicle>getAllVehicleFiveYears()
+//    {
+//        try {
+//            Statement stmt = conn.createStatement();
+//            ResultSet rs = stmt.executeQuery("\"SELECT v.id, v.vehicle_name, vo.owner_name \" +\n" +
+//                    "\"FROM vehicle v \" +\n" +
+//                    "\"INNER JOIN vehicle_owner vo ON vo.id = v.owner_id \" +\n" +
+//                    "\"WHERE v.status <> 'deleted'\";\n");
+//            return vehicleMapper.AVAiT(rs);
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
 
-    }
+   // }
 
 
     public void changeVehicleStatus(String id){
@@ -209,7 +222,7 @@ public class VehicleDao extends BaseDao implements ICrud<Vehicle> {
         }
 
     }
-    public void changeVehicleStatusAfterCompleteBooking(String id){
+    public void changeVehicleStatusAfterCompleteBooking(Integer id){
 
         try {
             Statement ps = conn.prepareStatement("UPDATE vehicle SET status = 'active' WHERE id =" +id);

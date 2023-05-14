@@ -1,6 +1,7 @@
 package org.carrental.UI;
 
 import com.itextpdf.text.DocumentException;
+import lombok.SneakyThrows;
 import org.carrental.dao.BookingDao;
 import org.carrental.domain.Bookingdetails;
 import org.carrental.service.*;
@@ -19,15 +20,16 @@ import java.time.Year;
 import java.util.List;
 import java.util.stream.IntStream;
 public class AnnualReportUi extends JFrame {
-private boolean flag;
-ReportService reportService = new ReportService();
+
+    private boolean flag;
+    ReportService reportService = new ReportService();
     private JTable dataTable;
     private JRadioButton radioOption1;
     private JRadioButton radioOption2;
     private JComboBox<Integer> yearDropdown;
     private JComboBox<String> radioDropdown;
     private JButton submitButton;
-
+    private JButton backbtn;
 
 
     public AnnualReportUi() {
@@ -37,7 +39,7 @@ ReportService reportService = new ReportService();
         // create main panel
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(100, 100, 100, 100));
 
         // create radio button panel
         JPanel radioPanel = new JPanel(new GridLayout(2, 1));
@@ -50,7 +52,7 @@ ReportService reportService = new ReportService();
             public void itemStateChanged(ItemEvent e) {
                 if (radioOption1.isSelected()) {
                     radioDropdown.setModel(new DefaultComboBoxModel<>(new BookingService().getVehicleIdAndNameForFiveYearDropDown()));
-                    flag= true;
+                    flag = true;
                 }
             }
         });
@@ -60,7 +62,7 @@ ReportService reportService = new ReportService();
             public void itemStateChanged(ItemEvent e) {
                 if (radioOption2.isSelected()) {
                     radioDropdown.setModel(new DefaultComboBoxModel<>(new OwnerService().getOwnerIdAndNameForDropDown()));
-               flag= false;
+                    flag = false;
                 }
             }
         });
@@ -102,28 +104,59 @@ ReportService reportService = new ReportService();
         submitButton = new JButton("Submit");
         submitPanel.add(submitButton);
 
+        backbtn = new JButton("back");
+      //  BookingUi.addImageOnButton(backbtn,"src/main/resources/add-note-icon.png",40,40);
+
+        submitPanel.add(backbtn);
+       // backbtn.add(backbtn);
+
         mainPanel.add(submitPanel);
 
         // add action listener to the submit button
 
-        submitButton.addActionListener(e->{
+        submitButton.addActionListener(e -> {
             submitButton.addActionListener(new ActionListener() {
-
+                @SneakyThrows
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     try {
                         if (flag) {
-                            //vehicle
-                        } else {
-                            //owner
-                            JTable tableOwner = new JTable();
-                            String[][] data = reportService.yearlyRepOwner((Integer) yearDropdown.getSelectedItem(), (String) radioDropdown.getSelectedItem());
-                            String[] headers = {"Owner-Name", "Commission-percent", "Vehicle-Name", "Booking-date", "Complete-date", "Commision-price"};
+
+                            JTable VehicleTable = new JTable();
+                            String[][] data = reportService.yearlyRepVehicle((Integer) yearDropdown.getSelectedItem(), (String) radioDropdown.getSelectedItem());
+                            String[] headers = {"Vehicel-Name", "Owner name", "Per day Price", "owner commision",
+                                    "booking date","end_date","noOfDays","total_amount","Commision-price","profit"};
                             DefaultTableModel dtm = new DefaultTableModel(data, headers);
                             JTable jt = new JTable(dtm);
                             JScrollPane sp = new JScrollPane(jt);
 
                             DefaultTableModel tableModelOwner = new DefaultTableModel(data, headers);
+                            VehicleTable.setModel(tableModelOwner);
+
+                            Double totalCommssion = reportService.totalprofitOfVehice((Integer) yearDropdown.getSelectedItem(), (String) radioDropdown.getSelectedItem());
+
+                            PdfGenerateVehicle.yearlyRep("Yearly Report", VehicleTable, "yearly_Reportvehicle.pdf", totalCommssion);
+                            File file = new File("yearly_Reportvehicle.pdf");
+                            if (file.exists()) {
+                                Desktop.getDesktop().open(file);
+                            } else {
+                                throw new FileNotFoundException("file not found");
+                            }
+
+
+
+
+                            //vehicle
+                        } else {
+                            //owner
+                            JTable tableOwner = new JTable();
+                            String[][] data = reportService.yearlyRepOwner((Integer) yearDropdown.getSelectedItem(), (String) radioDropdown.getSelectedItem());
+                            String[] column = {"Owner-Name", "Commission-percent", "Vehicle-Name", "Booking-date", "Complete-date", "Commision-price"};
+                            DefaultTableModel dtm = new DefaultTableModel(data, column);
+                            JTable jt = new JTable(dtm);
+                            JScrollPane sp = new JScrollPane(jt);
+
+                            DefaultTableModel tableModelOwner = new DefaultTableModel(data, column);
                             tableOwner.setModel(tableModelOwner);
 
                             Double totalCommssion = reportService.totalCommssionOfOwner((Integer) yearDropdown.getSelectedItem(), (String) radioDropdown.getSelectedItem());
@@ -143,9 +176,17 @@ ReportService reportService = new ReportService();
                             throw new RuntimeException(ex);
                         } catch (IOException ex) {
                             throw new RuntimeException(ex);
-                        }                }
-            }});
+                        }
+                    }
+                }
+            });
         });
+
+        backbtn.addActionListener(e->{
+            dispose();
+            new ReportsUi();
+        });
+
 
         // set main panel as content pane
         setContentPane(mainPanel);
@@ -153,17 +194,20 @@ ReportService reportService = new ReportService();
         // set window size and center on screen
         pack();
         setLocationRelativeTo(null);
+        setVisible(true);
+        setSize(800, 600);// set the width to 800 and the height to 600
+      //  dataTable.setPreferredSize(new Dimension(600, 400)); // set the preferred size to 600x400
+        submitButton.setFont(new Font("Arial", Font.PLAIN, 18)); // set the font size to 18
+        backbtn.setFont(new Font("Arial", Font.PLAIN, 18)); // set the font size to 18
+        yearDropdown.setFont(new Font("Arial", Font.PLAIN, 18)); // set the font size to 18
+        radioDropdown.setFont(new Font("Arial", Font.PLAIN, 18)); // set the font size to 18
+        radioDropdown.setFont(new Font("Arial", Font.PLAIN, 18)); // set the font size to 18
+        radioOption1.setFont(new Font("Arial", Font.PLAIN, 18)); // set the font size to 18
+        radioOption2.setFont(new Font("Arial", Font.PLAIN, 18)); // set the font size to 18
+
     }
 
     public static void main(String[] args) {
         new AnnualReportUi();
-        AnnualReportUi annualReportUI = new AnnualReportUi();
-        annualReportUI.setVisible(true);
-    }
-}
 
-
-//public class AnnualReportUi {
-//
-//
-//}
+    }}

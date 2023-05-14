@@ -7,6 +7,7 @@ import org.carrental.service.BookingService;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Date;
 
 public class AddBookingUi {
 
@@ -37,6 +38,7 @@ VehicleDao vehicleDao = new VehicleDao();
         JLabel datelb = new JLabel("Booking date");
        // JTextField datepicker = new JTextField();
         JCalendar datepicker = new JCalendar();
+
 
         String[] cidData = bookingService.getCustomerIdforDropDown();
         JLabel vidlb = new JLabel("VEHICLE ID");
@@ -74,9 +76,10 @@ VehicleDao vehicleDao = new VehicleDao();
             String selectedCustomerId = (String) dropdowncustomerId.getSelectedItem();
             String[] parts = selectedCustomerId.split(" ");
             String customerId = parts[0]; // get the customer ID from the selected item
+
             String selectedVehicleId = (String) dropdownvehicleId.getSelectedItem();
-            parts = selectedVehicleId.split(" ");
-            String vehicleId = parts[0]; // get the vehicle ID from the selected item
+            parts = selectedVehicleId.split(",");
+            String vehicleId = parts[0].trim(); // get the vehicle ID from the selected item
 
             Integer bookingAmount = 0;
             Boolean flag = true;
@@ -91,9 +94,9 @@ VehicleDao vehicleDao = new VehicleDao();
                 frame.dispose();
                 new BookingUi();
             }
-
-
         });
+
+
 
     }
 }

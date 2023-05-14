@@ -25,6 +25,8 @@ public class Bookingdetails {
     private Long owner_commision;
     private Integer noOfDays;
     private Double total_amount;
+    private Double profit;
+
 
 
 

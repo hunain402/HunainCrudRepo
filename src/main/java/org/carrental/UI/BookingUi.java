@@ -30,7 +30,7 @@ public class BookingUi extends BaseDao {
         btnPanel.setLayout(new GridLayout(8,1,10,10));
 //ADD BUTTON
         JButton add = new JButton("Add Booking");
-        addImageOnButton(add,"src/main/resources/add-note-icon.png",100,100);
+        addImageOnButton(add,"src/main/resources/add-note-icon.png",40,40);
         btnPanel.add(add);
 
         add.addActionListener((event)->{
@@ -42,13 +42,13 @@ public class BookingUi extends BaseDao {
 //EDIT BUTTON
         JButton edit = new JButton("Update");
         btnPanel.add(edit);
-        addImageOnButton(edit,"src/main/resources/data-update-icon.png",100,100);
+        addImageOnButton(edit,"src/main/resources/data-update-icon.png",40,40);
 
 
 //BACK BUTTON
         JButton back = new JButton("Back");
         btnPanel.add(back);
-        addImageOnButton(back,"src/main/resources/curved-arrow-back-outline-icon.png",100,100);
+        addImageOnButton(back,"src/main/resources/curved-arrow-back-outline-icon.png",40,40);
 
         back.addActionListener(e -> {
             frame.dispose();
@@ -60,14 +60,14 @@ public class BookingUi extends BaseDao {
 
         JButton delete = new JButton("Delete");
         btnPanel.add(delete);
-        addImageOnButton(delete,"src/main/resources/delete-icon.png",100,100);
+        addImageOnButton(delete,"src/main/resources/delete-icon.png",40,40);
 
 
 //complete BUTTON
 
         JButton  completeBooking = new JButton("Complete Booking");
         btnPanel.add( completeBooking);
-        addImageOnButton( completeBooking,"src/main/resources/complete-icon.png",100,100);
+        addImageOnButton( completeBooking,"src/main/resources/complete-icon.png",40,40);
 
 
 
@@ -99,24 +99,6 @@ public class BookingUi extends BaseDao {
 
 
 
-//        genratepdf.addActionListener((event)->{
-//            try {
-//                pdfGeneratorbooking.generatePDF(jt);
-//            } catch (Exception ex) {
-//                throw new RuntimeException(ex);
-//            }
-//            try {
-//                File file = new File("booking.pdf");
-//                if (file.exists()) {
-//                    Desktop.getDesktop().open(file);
-//                } else {
-//                    System.out.println("File not Found");
-//                }
-//            } catch (IOException ex) {
-//                throw new RuntimeException(ex);
-//            }
-//        });
-//EDIT ACTION
 
         edit.addActionListener(e -> {
             if (jt.getSelectedRow() >= 0) {
@@ -145,27 +127,36 @@ public class BookingUi extends BaseDao {
             }
         });
 
-        completeBooking.addActionListener (e1->{
-                    if (jt.getSelectedRow() >= 0) {
-                        String id = (String) jt.getValueAt(jt.getSelectedRow(), 0);
-                 frame.dispose();
-                 new CompleteUi(id);
-                    }
-                    else  {
-                        JOptionPane.showMessageDialog(frame, "Please select the row");
-        }
-    });
+        completeBooking.addActionListener(e1 -> {
+            AddBookingUi addBookingUi= new AddBookingUi();
+            if (jt.getSelectedRow() >= 0) {
+                String id = String.valueOf(jt.getValueAt(jt.getSelectedRow(), 0));
+
+                    frame.dispose();
+                new CompleteUi(id);
+            } else {
+                JOptionPane.showMessageDialog(frame, "Please select a field");
+            }
+        });
+
 
 //SCROLL
         JScrollPane sp=new JScrollPane(jt);
+        sp.setPreferredSize(new Dimension(1000, 500));
+
         tblAndSearchPanel.add(sp);
 
 
-        frame.setLayout(new GridLayout(1,3,150,5));
+
+        // frame.setLayout(new GridLayout(1,3,150,5));
+        frame.setLayout(new GridLayout(2, 2, 50, 20));
+
         frame.add(btnPanel);
         frame.add(tblAndSearchPanel);
 
-        frame.setSize(1500,1000);
+        frame.setSize(1200, 800);
+
+
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);

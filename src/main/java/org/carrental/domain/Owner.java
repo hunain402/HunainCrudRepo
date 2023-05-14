@@ -14,5 +14,7 @@ public class Owner {
     private String ownercnic;
     private String ownernumber;
     private String owneraddress;
+    private String status;
     private Float ownercommision;
+
 }

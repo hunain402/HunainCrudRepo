@@ -9,10 +9,14 @@ import org.carrental.domain.Booking;
 import org.carrental.domain.Customer;
 import org.carrental.domain.Owner;
 import org.carrental.domain.Vehicle;
+import org.carrental.service.BookingService;
+import org.carrental.service.ReportService;
+import org.carrental.service.VehicleService;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 
-    public class Main {
+public class Main {
         public static void main(String[] args) {
 
 
@@ -54,7 +58,7 @@ import java.text.SimpleDateFormat;
 
 //                Customer updatecustomer = customerDao.Update();
 
-               // System.out.println(customerDao.GetById(2L));
+            // System.out.println(customerDao.GetById(2L));
 
 //                                            DELETE CUSTOMER BY ID
 //
@@ -71,7 +75,7 @@ import java.text.SimpleDateFormat;
 //                                             INSERT INTO BOOKING
 //                                            VALUES INITIALIZE HERE
 //
-           BookingDao bookingDao = new BookingDao();
+            BookingDao bookingDao = new BookingDao();
 //            Booking insertintobooking = Booking.builder()
 //                    .price(999.0)
 //                    .status("active")
@@ -85,7 +89,7 @@ import java.text.SimpleDateFormat;
 //                                            GET ALL FROM BOOKING
 //
 //
-        // bookingDao.getAll().forEach(System.out::println);
+            // bookingDao.getAll().forEach(System.out::println);
 
 
 //                                              GET BOOKING BY ID
@@ -121,7 +125,6 @@ import java.text.SimpleDateFormat;
 //                                                GET ALL BOOKING DETAILS (INNER JOIN )
 
 //            bookingDao.getAllBookingDetails().forEach(System.out::println);
-
 
 
 //                                              INSERT INTO OWNER
@@ -205,16 +208,18 @@ import java.text.SimpleDateFormat;
 //                  vehicleDao.DeleteById(7l);
 //            bookingDao.getAllCid().forEach(System.out::println);
 
- //           vehicleDao.getAllVehicleWithOwnerName().forEach(System.out::println);
+            //           vehicleDao.getAllVehicleWithOwnerName().forEach(System.out::println);
 //vehicleDao.getAllAvailableVehicleWithOwnerName().forEach(System.out::println);
 
-   // bookingDao.getSumOfAllIndividualBooking().forEach(System.out::println);
+            // bookingDao.getSumOfAllIndividualBooking().forEach(System.out::println);
 
-           // vehicleDao.getAllVehicleAvailable().forEach(System.out::println);
+            // vehicleDao.getAllVehicleAvailable().forEach(System.out::println);
 
-         //   bookingDao.leastFrequentCar("2023-06-1", "2023-06-29").forEach(System.out::println);
+            //   bookingDao.leastFrequentCar("2023-06-1", "2023-06-29").forEach(System.out::println);
 
+            //   new ReportService().yearlyRepOwner(2023,"ali");
 
-        }
-    }
+            // Arrays.stream(new BookingService().getVehicleIdAndNameForDropDown()).forEach(System.out::println);
+            //Arrays.stream(new BookingService().getCustomerIdforDropDown()).forEach(System.out::println);
+        }}
 

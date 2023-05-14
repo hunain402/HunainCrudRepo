@@ -63,7 +63,9 @@ public class AddOwnerUi {
                 new OwnerUi();
 
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(frame, "Unable to save");
+                throw new RuntimeException(ex);
+
+                //  JOptionPane.showMessageDialog(frame, "Unable to save");
             }
 
         });

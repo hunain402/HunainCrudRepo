@@ -25,10 +25,16 @@ public class Updatebookingui {
         JTextField datetf = new JTextField(20);
 
         JLabel cidlb = new JLabel("CUSTOMER ID");
-        JTextField cidtf = new JTextField(20);
+        //JTextField cidtf = new JTextField(20);
+        String[] cidData = bookingService.getCustomerIdforDropDown();
+        JComboBox<String> dropdowncustomerId = new JComboBox<>(cidData);
 
-        JLabel vidlb = new JLabel("VEHICLE ID");
-        JTextField vidtf = new JTextField(20);
+       JLabel vidlb = new JLabel("VEHICLE ID");
+//        JTextField vidtf = new JTextField(20);
+        String[] vidData = bookingService.getVehicleIdAndNameForDropDown();
+        JComboBox<String> dropdownvehicleId = new JComboBox<>(vidData);
+
+
 
         JButton back = new JButton("BACK");
         JButton save = new JButton("SAVE");
@@ -40,22 +46,31 @@ public class Updatebookingui {
         frame.add(datelb);
         frame.add(datetf);
         frame.add(cidlb);
-        frame.add(cidtf);
+        frame.add(dropdowncustomerId);
         frame.add(vidlb);
-        frame.add(vidtf);
+        frame.add(dropdownvehicleId);
         frame.add(save);
         frame.add(back);
 
         pricetf.setText(price);
         statustf.setText(status);
         datetf.setText(bookingDate);
-        cidtf.setText(customerId);
-        vidtf.setText(vehicleId);
+        dropdowncustomerId.setSelectedItem(customerId);
+        dropdownvehicleId.setSelectedItem(vehicleId);
 
 
 
         save.addActionListener(e -> {
-            bookingService.save(id, pricetf.getText(), statustf.getText(), datetf.getText(), cidtf.getText(), vidtf.getText());
+            String selectedCustomerId = (String) dropdowncustomerId.getSelectedItem();
+            String[] parts = selectedCustomerId.split(" ");
+            String customerIdSplit = parts[0]; // get the customer ID from the selected item
+            String selectedVehicleId = (String) dropdownvehicleId.getSelectedItem();
+            parts = selectedVehicleId.split(",");
+            String vehicleIdSplit = parts[0]; // get the vehicle ID from the selected item
+
+
+
+            bookingService.save(id, pricetf.getText(), statustf.getText(), datetf.getText(),customerIdSplit,vehicleIdSplit);
             frame.dispose();
             new BookingUi();
         });

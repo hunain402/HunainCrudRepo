@@ -10,7 +10,7 @@ public class VehicleService {
     private final VehicleDao vehicleDao = new VehicleDao();
 
   //add
-    public void save(String name, String model, String brand, String colour, String ownerId) {
+    public void save(String name, String model, String brand, String colour, Integer ownerId) {
         Vehicle vehicle = Vehicle.builder()
                 .vehiclename(name)
                 .vehiclemodel(Long.valueOf(model))
@@ -18,7 +18,8 @@ public class VehicleService {
                 .vehiclecolour(colour)
                 .onwerid(Long.valueOf(ownerId))
                 .build();
-        vehicleDao.insert(vehicle);
+        vehicleDao.
+                insert(vehicle);
     }
 
     //edit
@@ -37,7 +38,7 @@ public class VehicleService {
         vehicleDao.DeleteById(Long.valueOf(Long.valueOf(id)));
     }
 
-    public void softDelete(Long id) {
+    public void softDeleteVehicle(Long id) {
         vehicleDao.DeleteById(Long.valueOf(Long.valueOf(id)));
     }
 

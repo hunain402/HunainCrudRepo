@@ -60,9 +60,12 @@ public class PdfGenerateVehicle {
                 table.addCell(new PdfPCell(new Paragraph(jTable.getValueAt(i, j).toString())));
             }
         }
+
+        Paragraph totalCommision=new Paragraph("TOTAL COMMISION = "+total);
         document.add(title);
         document.add(space);
         document.add(table);
+        document.add(totalCommision);
         document.close();
     }
 }
